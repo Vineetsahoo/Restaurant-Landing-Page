@@ -2883,46 +2883,51 @@ p, .section-description, .about-description {
     margin-top: 3rem;
     padding-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
 }
 
 .sponsors-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .sponsors-header h4 {
     color: var(--primary-color);
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin-bottom: 0.5rem;
     font-family: 'Playfair Display', serif;
+    font-weight: 700;
 }
 
 .sponsors-header p {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
     margin: 0;
+    font-weight: 300;
 }
 
-.sponsors-slider {
+.sponsors-carousel {
     overflow: hidden;
     position: relative;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 1.5rem 0;
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(44, 62, 80, 0.1) 100%);
+    border-radius: 15px;
+    padding: 2rem 0;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sponsors-track {
+.sponsors-wrapper {
     display: flex;
-    animation: sponsorScroll 25s linear infinite;
+    animation: sponsorCarouselScroll 30s linear infinite;
     will-change: transform;
+    gap: 1.5rem;
 }
 
-.sponsors-track:hover {
+.sponsors-wrapper:hover {
     animation-play-state: paused;
 }
 
-@keyframes sponsorScroll {
+@keyframes sponsorCarouselScroll {
     0% {
         transform: translateX(0);
     }
@@ -2931,94 +2936,141 @@ p, .section-description, .about-description {
     }
 }
 
-.sponsor-item {
-    flex: 0 0 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 0 1rem;
-    transition: var(--transition);
-    position: relative;
-    border-radius: 12px;
-}
-
-.sponsor-item:hover {
-    transform: translateY(-3px);
-}
-
-/* Sponsor logo text styling */
-.sponsor-logo-text {
-    font-size: 1.2rem;
-    text-align: center;
-    margin-bottom: 0.5rem;
-    padding: 0.8rem 1rem;
+.sponsor-card {
+    flex: 0 0 280px;
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: var(--transition);
-    min-height: 60px;
+    border-radius: 15px;
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.sponsor-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 30px rgba(255, 107, 53, 0.3);
+    background: rgba(255, 255, 255, 1);
+}
+
+.sponsor-logo {
+    position: relative;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-transform: capitalize;
-    letter-spacing: 0.5px;
-    border: 2px solid transparent;
-    position: relative;
+    margin-bottom: 1rem;
     overflow: hidden;
-    z-index: 2;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
-.sponsor-logo-text::before {
-    content: '';
+.sponsor-text {
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 3;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.sponsor-bg-pattern {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&h=150&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&h=200&fit=crop');
     background-size: cover;
     background-position: center;
-    opacity: 0.15;
+    opacity: 0.08;
     transition: opacity 0.3s ease;
-    z-index: -1;
+    z-index: 1;
 }
 
-.sponsor-item:hover .sponsor-logo-text {
+.sponsor-card:hover .sponsor-bg-pattern {
+    opacity: 0.15;
+}
+
+.sponsor-card:hover .sponsor-text {
     transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    border-color: var(--primary-color);
-    background: white;
-    color: #ff6b35 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.sponsor-item:hover .sponsor-logo-text::before {
-    opacity: 0.25;
-}
-
-.sponsor-item img {
-    display: none; /* Hide old image styles */
-}
-
-.sponsor-item:hover img {
-    display: none; /* Hide old hover image styles */
-}
-
-.sponsor-item span {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.7rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.sponsor-info {
+    text-align: center;
     position: relative;
     z-index: 2;
 }
 
-.sponsor-item:hover span {
+.sponsor-info h5 {
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-family: 'Playfair Display', serif;
+    transition: color 0.3s ease;
+}
+
+.sponsor-info span {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.sponsor-card:hover .sponsor-info h5 {
     color: var(--primary-color);
 }
 
+.sponsor-card:hover .sponsor-info span {
+    color: var(--secondary-color);
+}
+
+.sponsors-gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(44, 62, 80, 0.8) 0%,
+        transparent 15%,
+        transparent 85%,
+        rgba(44, 62, 80, 0.8) 100%
+    );
+    pointer-events: none;
+    z-index: 10;
+}
+
 /* Responsive design for footer sponsors */
+@media (max-width: 1024px) {
+    .sponsor-card {
+        flex: 0 0 240px;
+        padding: 1.2rem;
+    }
+    
+    .sponsor-logo {
+        height: 70px;
+    }
+    
+    .sponsor-text {
+        font-size: 1.2rem;
+    }
+    
+    .sponsor-info h5 {
+        font-size: 1rem;
+    }
+}
+
 @media (max-width: 768px) {
     .footer-sponsors {
         margin-top: 2rem;
@@ -3026,38 +3078,71 @@ p, .section-description, .about-description {
     }
     
     .sponsors-header h4 {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
     }
     
-    .sponsor-item {
-        flex: 0 0 120px;
-        padding: 0 0.5rem;
+    .sponsors-header p {
+        font-size: 0.9rem;
     }
     
-    .sponsor-logo-text {
+    .sponsor-card {
+        flex: 0 0 200px;
+        padding: 1rem;
+    }
+    
+    .sponsor-logo {
+        height: 60px;
+        margin-bottom: 0.8rem;
+    }
+    
+    .sponsor-text {
         font-size: 1rem;
-        padding: 0.6rem 0.8rem;
-        min-height: 50px;
+        letter-spacing: 0.5px;
     }
     
-    .sponsor-item span {
-        font-size: 0.6rem;
+    .sponsor-info h5 {
+        font-size: 0.9rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .sponsor-info span {
+        font-size: 0.75rem;
+    }
+    
+    .sponsors-wrapper {
+        gap: 1rem;
     }
 }
 
 @media (max-width: 480px) {
-    .sponsor-item {
-        flex: 0 0 100px;
+    .sponsor-card {
+        flex: 0 0 160px;
+        padding: 0.8rem;
     }
     
-    .sponsor-logo-text {
+    .sponsor-logo {
+        height: 50px;
+        margin-bottom: 0.6rem;
+    }
+    
+    .sponsor-text {
         font-size: 0.9rem;
-        padding: 0.5rem 0.6rem;
-        min-height: 40px;
     }
     
-    .sponsor-item span {
-        font-size: 0.55rem;
+    .sponsor-info h5 {
+        font-size: 0.8rem;
+    }
+    
+    .sponsor-info span {
+        font-size: 0.7rem;
+    }
+    
+    .sponsors-wrapper {
+        gap: 0.8rem;
+    }
+    
+    .sponsors-carousel {
+        padding: 1.5rem 0;
     }
 }
 
