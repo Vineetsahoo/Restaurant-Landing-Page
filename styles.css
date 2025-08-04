@@ -2497,6 +2497,229 @@ p, .section-description, .about-description {
     margin: 0;
 }
 
+/* Customer Reviews Section */
+.reviews-section {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+}
+
+.reviews-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=800&fit=crop');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.25;
+    z-index: 1;
+}
+
+.reviews-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.review-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: var(--transition);
+    border: 1px solid rgba(255, 107, 53, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.review-card::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    font-size: 6rem;
+    color: rgba(255, 107, 53, 0.1);
+    font-family: 'Playfair Display', serif;
+    line-height: 1;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(255, 107, 53, 0.15);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.customer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.customer-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color), #ff8c42);
+}
+
+.customer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; /* Hide old image styles */
+}
+
+.customer-logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    letter-spacing: 1px;
+    font-family: 'Arial', sans-serif;
+}
+
+.customer-details h4 {
+    margin: 0;
+    color: var(--dark-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.customer-details span {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.rating {
+    display: flex;
+    gap: 2px;
+}
+
+.rating i {
+    color: #ffc107;
+    font-size: 1rem;
+}
+
+.review-text {
+    color: #555;
+    line-height: 1.6;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.review-date {
+    color: #999;
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+.reviews-stats {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    padding: 2rem 0;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.reviews-stats .stars {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+}
+
+.reviews-stats .stars i {
+    color: #ffc107;
+    font-size: 1.2rem;
+}
+
+/* Responsive Design for Reviews */
+@media (max-width: 768px) {
+    .reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .review-card {
+        padding: 1.5rem;
+    }
+    
+    .reviews-stats {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .reviews-section {
+        padding: 3rem 0;
+    }
+    
+    .review-card {
+        padding: 1.2rem;
+    }
+    
+    .customer-info {
+        gap: 0.8rem;
+    }
+    
+    .customer-avatar {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .customer-details h4 {
+        font-size: 1rem;
+    }
+    
+    .review-text {
+        font-size: 0.9rem;
+    }
+}
+
 /* Footer */
 .footer {
     background: var(--gradient-dark);
@@ -2653,6 +2876,189 @@ p, .section-description, .about-description {
 
 .newsletter-form button:hover {
     transform: translateY(-2px);
+}
+
+/* Footer Sponsors */
+.footer-sponsors {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sponsors-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.sponsors-header h4 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.sponsors-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.sponsors-slider {
+    overflow: hidden;
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem 0;
+    backdrop-filter: blur(10px);
+}
+
+.sponsors-track {
+    display: flex;
+    animation: sponsorScroll 25s linear infinite;
+    will-change: transform;
+}
+
+.sponsors-track:hover {
+    animation-play-state: paused;
+}
+
+@keyframes sponsorScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.sponsor-item {
+    flex: 0 0 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 1rem;
+    transition: var(--transition);
+    position: relative;
+    border-radius: 12px;
+}
+
+.sponsor-item:hover {
+    transform: translateY(-3px);
+}
+
+/* Sponsor logo text styling */
+.sponsor-logo-text {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: var(--transition);
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.sponsor-logo-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&h=150&fit=crop');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.sponsor-item:hover .sponsor-logo-text {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-color: var(--primary-color);
+    background: white;
+    color: #ff6b35 !important;
+}
+
+.sponsor-item:hover .sponsor-logo-text::before {
+    opacity: 0.25;
+}
+
+.sponsor-item img {
+    display: none; /* Hide old image styles */
+}
+
+.sponsor-item:hover img {
+    display: none; /* Hide old hover image styles */
+}
+
+.sponsor-item span {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 2;
+}
+
+.sponsor-item:hover span {
+    color: var(--primary-color);
+}
+
+/* Responsive design for footer sponsors */
+@media (max-width: 768px) {
+    .footer-sponsors {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+    }
+    
+    .sponsors-header h4 {
+        font-size: 1.2rem;
+    }
+    
+    .sponsor-item {
+        flex: 0 0 120px;
+        padding: 0 0.5rem;
+    }
+    
+    .sponsor-logo-text {
+        font-size: 1rem;
+        padding: 0.6rem 0.8rem;
+        min-height: 50px;
+    }
+    
+    .sponsor-item span {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sponsor-item {
+        flex: 0 0 100px;
+    }
+    
+    .sponsor-logo-text {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.6rem;
+        min-height: 40px;
+    }
+    
+    .sponsor-item span {
+        font-size: 0.55rem;
+    }
 }
 
 .footer-bottom {
