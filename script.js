@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeMenuTabs();
     initializeSpecialsCarousel();
     initializeReservationForm();
+    initializeProgressiveReservation(); // New progressive form
+    initializeQuickBooking(); // New quick booking
+    initializeSmartMenu(); // New smart menu with Hick's Law
     initializeGallery();
     initializeLightbox();
     initializeScrollToTop();
@@ -513,6 +516,254 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
+// ========================================= 
+// UX LAWS IMPLEMENTATIONS
+// ========================================= 
+
+// Tesler's Law - Progressive Disclosure for Reservation
+function initializeProgressiveReservation() {
+    const form = document.getElementById('reservationForm');
+    
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(form);
+            const reservationData = {};
+            
+            for (let [key, value] of formData.entries()) {
+                reservationData[key] = value;
+            }
+            
+            // Validate current step
+            if (validateCurrentStep()) {
+                // Show success message
+                showNotification('Reservation submitted successfully! We will call you shortly to confirm your booking.', 'success');
+                
+                // Reset form and go back to quick booking
+                form.reset();
+                showQuickBooking();
+            }
+        });
+    }
+}
+
+// Quick Booking System
+function initializeQuickBooking() {
+    const quickOptions = document.querySelectorAll('.quick-option');
+    
+    quickOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const time = option.getAttribute('data-time');
+            const guests = option.getAttribute('data-guests');
+            
+            // Pre-fill the detailed form with selected values
+            document.getElementById('time').value = time;
+            document.getElementById('guests').value = guests;
+            
+            // Set date to today + 1
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('date').value = tomorrow.toISOString().split('T')[0];
+            
+            // Show detailed form and go to step 1 (user info)
+            showDetailedForm();
+            
+            showNotification(`Selected ${time} for ${guests} guests. Please provide your contact information.`, 'info');
+        });
+    });
+}
+
+// Form Step Navigation
+let currentStep = 1;
+
+function showDetailedForm() {
+    document.getElementById('quickBooking').style.display = 'none';
+    document.getElementById('reservationForm').classList.remove('hidden');
+    currentStep = 1;
+    showStep(currentStep);
+}
+
+function showQuickBooking() {
+    document.getElementById('quickBooking').style.display = 'block';
+    document.getElementById('reservationForm').classList.add('hidden');
+    currentStep = 1;
+}
+
+function nextStep(step) {
+    if (validateCurrentStep()) {
+        // Hide current step
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById(`step${currentStep}`).style.animationName = 'slideOutLeft';
+        
+        setTimeout(() => {
+            document.getElementById(`step${currentStep}`).style.display = 'none';
+            
+            // Show next step
+            currentStep = step;
+            showStep(currentStep);
+        }, 300);
+    }
+}
+
+function prevStep(step) {
+    // Hide current step
+    document.getElementById(`step${currentStep}`).classList.remove('active');
+    document.getElementById(`step${currentStep}`).style.animationName = 'slideOutRight';
+    
+    setTimeout(() => {
+        document.getElementById(`step${currentStep}`).style.display = 'none';
+        
+        // Show previous step
+        currentStep = step;
+        showStep(currentStep);
+    }, 300);
+}
+
+function showStep(step) {
+    const stepElement = document.getElementById(`step${step}`);
+    stepElement.style.display = 'block';
+    stepElement.style.animationName = currentStep > step ? 'slideInLeft' : 'slideInRight';
+    stepElement.classList.add('active');
+    
+    // Update progress indicators
+    updateProgressIndicators(step);
+}
+
+function updateProgressIndicators(step) {
+    const progressSteps = document.querySelectorAll('.progress-step');
+    const progressLines = document.querySelectorAll('.progress-line');
+    
+    progressSteps.forEach((progStep, index) => {
+        progStep.classList.remove('active', 'completed');
+        if (index + 1 < step) {
+            progStep.classList.add('completed');
+        } else if (index + 1 === step) {
+            progStep.classList.add('active');
+        }
+    });
+    
+    progressLines.forEach((line, index) => {
+        line.classList.remove('completed');
+        if (index + 1 < step) {
+            line.classList.add('completed');
+        }
+    });
+}
+
+function validateCurrentStep() {
+    const currentStepElement = document.getElementById(`step${currentStep}`);
+    const requiredFields = currentStepElement.querySelectorAll('input[required], select[required]');
+    
+    for (let field of requiredFields) {
+        if (!field.value.trim()) {
+            field.focus();
+            field.parentElement.classList.add('error');
+            showNotification(`Please fill in the ${field.labels[0].textContent.replace(' *', '')} field.`, 'error');
+            
+            // Remove error class after 3 seconds
+            setTimeout(() => {
+                field.parentElement.classList.remove('error');
+            }, 3000);
+            
+            return false;
+        }
+    }
+    
+    // Additional validation for step 1 (contact info)
+    if (currentStep === 1) {
+        const phone = document.getElementById('phone').value;
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+        if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+            showNotification('Please enter a valid phone number.', 'error');
+            return false;
+        }
+    }
+    
+    // Additional validation for step 2 (date/time)
+    if (currentStep === 2) {
+        const selectedDate = new Date(document.getElementById('date').value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (selectedDate < today) {
+            showNotification('Please select a future date.', 'error');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// Hick's Law - Smart Menu with Progressive Disclosure
+function initializeSmartMenu() {
+    // Initially show only first 4 items per category
+    document.querySelectorAll('.tab-content').forEach(tabContent => {
+        const items = tabContent.querySelectorAll('.menu-item');
+        
+        items.forEach((item, index) => {
+            if (index >= 4) { // Changed from 6 to 4
+                item.style.display = 'none';
+                item.classList.add('hidden-item');
+            }
+        });
+        
+        // Add "Show More" button if there are more than 4 items
+        if (items.length > 4) { // Changed from 6 to 4
+            const showMoreBtn = document.createElement('button');
+            showMoreBtn.className = 'btn-outline show-more-items';
+            showMoreBtn.innerHTML = `
+                <span>Show More Items (${items.length - 4})</span>
+                <i class="fas fa-chevron-down"></i>
+            `;
+            showMoreBtn.addEventListener('click', () => showMoreMenuItems(tabContent, showMoreBtn));
+            tabContent.appendChild(showMoreBtn);
+        }
+    });
+}
+
+function showMoreMenuItems(tabContent, button) {
+    const hiddenItems = tabContent.querySelectorAll('.hidden-item');
+    
+    hiddenItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.display = 'block';
+            item.classList.remove('hidden-item');
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, 50);
+        }, index * 100);
+    });
+    
+    button.remove();
+}
+
+// Add popular items indicator
+function addPopularItemsIndicator() {
+    const popularItems = [
+        'Chicken Tikka Masala',
+        'Biryani',
+        'Naan Bread',
+        'Samosas',
+        'Mango Lassi'
+    ];
+    
+    document.querySelectorAll('.menu-item h3').forEach(title => {
+        if (popularItems.some(popular => title.textContent.includes(popular))) {
+            const popularBadge = document.createElement('span');
+            popularBadge.className = 'popular-badge';
+            popularBadge.innerHTML = '<i class="fas fa-star"></i> Popular';
+            title.appendChild(popularBadge);
+        }
+    });
+}
+
 // Newsletter Subscription
 document.addEventListener('DOMContentLoaded', function() {
     const newsletterForm = document.querySelector('.newsletter-form');
@@ -627,6 +878,80 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// UX Laws Implementation - Enhanced Quick Actions
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize popular items indicator
+    addPopularItemsIndicator();
+    
+    // Add quick order functionality
+    initializeQuickOrder();
+    
+    // Enhanced accessibility
+    initializeA11yEnhancements();
+});
+
+// Quick order functionality for menu items
+function initializeQuickOrder() {
+    const quickOrderBtns = document.querySelectorAll('.quick-add-btn');
+    
+    quickOrderBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const menuItem = btn.closest('.menu-item');
+            const itemName = menuItem.querySelector('h3').textContent.replace(/★.*$/, '').trim();
+            const itemPrice = menuItem.querySelector('.price, .menu-item-price').textContent;
+            
+            showNotification(`${itemName} added to your order! ${itemPrice}`, 'success');
+            
+            // Add visual feedback
+            btn.innerHTML = '<i class="fas fa-check"></i> Added';
+            btn.style.background = '#4CAF50';
+            
+            setTimeout(() => {
+                btn.innerHTML = 'Quick Order';
+                btn.style.background = '';
+            }, 2000);
+        });
+    });
+}
+
+// Accessibility enhancements
+function initializeA11yEnhancements() {
+    // Add ARIA labels to interactive elements
+    document.querySelectorAll('.btn-primary, .btn-secondary, .btn-outline').forEach(btn => {
+        if (!btn.getAttribute('aria-label')) {
+            btn.setAttribute('aria-label', btn.textContent.trim());
+        }
+    });
+    
+    // Add keyboard navigation for custom elements
+    document.querySelectorAll('.quick-option').forEach(option => {
+        option.setAttribute('tabindex', '0');
+        option.setAttribute('role', 'button');
+        
+        option.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                option.click();
+            }
+        });
+    });
+    
+    // Enhance form accessibility
+    document.querySelectorAll('.form-group').forEach(group => {
+        const input = group.querySelector('input, select, textarea');
+        const label = group.querySelector('label');
+        
+        if (input && label && !input.getAttribute('aria-describedby')) {
+            const helpId = `help-${input.id}`;
+            input.setAttribute('aria-describedby', helpId);
+        }
+    });
+}
+
+// Initialize menu search when DOM is loaded
+// Removed menu search functionality as requested
+
 // Add CSS for image loading animation
 const style = document.createElement('style');
 style.textContent = `
@@ -675,6 +1000,48 @@ style.textContent = `
 
 document.head.appendChild(style);
 
+// Menu Items Toggle Functionality
+function toggleMenuItems(category) {
+    const hiddenItems = document.querySelectorAll(`#${category} .hidden-item`);
+    const button = document.querySelector(`#${category} .show-more-btn`);
+    const btnText = button.querySelector('.btn-text');
+    const btnIcon = button.querySelector('.btn-icon');
+    
+    const isExpanded = button.classList.contains('expanded');
+    
+    if (isExpanded) {
+        // Hide items
+        hiddenItems.forEach((item, index) => {
+            setTimeout(() => {
+                item.classList.remove('show');
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
+            }, index * 100);
+        });
+        
+        button.classList.remove('expanded');
+        btnText.textContent = 'Show other items';
+        btnIcon.classList.remove('fa-chevron-up');
+        btnIcon.classList.add('fa-chevron-down');
+    } else {
+        // Show items
+        hiddenItems.forEach((item, index) => {
+            setTimeout(() => {
+                item.style.display = 'block';
+                setTimeout(() => {
+                    item.classList.add('show');
+                }, 50);
+            }, index * 100);
+        });
+        
+        button.classList.add('expanded');
+        btnText.textContent = 'Show less items';
+        btnIcon.classList.remove('fa-chevron-down');
+        btnIcon.classList.add('fa-chevron-up');
+    }
+}
+
 // Error Handling
 window.addEventListener('error', function(e) {
     console.error('JavaScript Error:', e.error);
@@ -686,3 +1053,69 @@ if (!('scrollBehavior' in document.documentElement.style)) {
     script.src = 'https://cdn.jsdelivr.net/gh/iamdustan/smoothscroll@master/src/smoothscroll.js';
     document.head.appendChild(script);
 }
+
+// Reservation form functionality
+function submitReservation(event) {
+    event.preventDefault();
+    
+    // Get form data
+    const form = event.target.closest('form');
+    const formData = new FormData(form);
+    
+    const reservationData = {
+        name: formData.get('name'),
+        phone: formData.get('phone'),
+        date: formData.get('date'),
+        time: formData.get('time'),
+        guests: formData.get('guests'),
+        specialRequests: formData.get('special-requests')
+    };
+    
+    // Validate required fields
+    if (!reservationData.name || !reservationData.phone || !reservationData.date || !reservationData.time || !reservationData.guests) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+    
+    // Show confirmation modal with booking details
+    showConfirmationModal(reservationData);
+    
+    // Reset form
+    form.reset();
+}
+
+function showConfirmationModal(data) {
+    // Populate confirmation details
+    document.getElementById('confirmName').textContent = data.name;
+    document.getElementById('confirmPhone').textContent = data.phone;
+    document.getElementById('confirmDate').textContent = new Date(data.date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    document.getElementById('confirmTime').textContent = data.time;
+    document.getElementById('confirmGuests').textContent = `${data.guests} ${data.guests === '1' ? 'person' : 'people'}`;
+    
+    // Show modal
+    const modal = document.getElementById('confirmationModal');
+    modal.classList.add('show');
+    
+    // Prevent body scrolling
+    document.body.style.overflow = 'hidden';
+}
+
+function closeConfirmation() {
+    const modal = document.getElementById('confirmationModal');
+    modal.classList.remove('show');
+    
+    // Restore body scrolling
+    document.body.style.overflow = '';
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeConfirmation();
+    }
+});
